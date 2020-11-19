@@ -1,9 +1,10 @@
-import React, { useCallback, useRef } from 'react';
+import React, { ChangeEvent, useCallback, useRef } from 'react';
 import { FiArrowLeft, FiMail, FiLock, FiUser, FiCamera } from 'react-icons/fi';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
 import { Link, useHistory } from 'react-router-dom';
+import api from '../../services/api';
 
 import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
@@ -26,7 +27,7 @@ const Profile: React.FC = () => {
   const { addToast } = useToast();
   const history = useHistory();
 
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
 
   // eslint-disable-next-line @typescript-eslint/ban-types
   const handleSubmit = useCallback(
@@ -68,6 +69,28 @@ const Profile: React.FC = () => {
     [signIn, addToast, history],
   );
 
+  const handleAvatarChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files) {
+        const data = new FormData();
+
+        data.append('avatar', e.target.files[0]);
+        console.log(e.target.files[0]);
+
+        api
+          .patch('/users/avatar', data)
+          .then(response => {
+            updateUser(response.data);
+            addToast({
+              type: 'success',
+              title: 'Avatar atualizado',
+            });
+          })
+          .catch(err => console.log(err));
+      }
+    },
+    [addToast, updateUser],
+  );
   return (
     <Container>
       <header>
@@ -86,9 +109,11 @@ const Profile: React.FC = () => {
         >
           <ProfileImg>
             <img src={user.avatar_url} alt={user.name} />
-            <button type="button">
+            <label htmlFor="avatar">
               <FiCamera />
-            </button>
+
+              <input type="file" id="avatar" onChange={handleAvatarChange} />
+            </label>
           </ProfileImg>
 
           <h1>Meu perfil</h1>
