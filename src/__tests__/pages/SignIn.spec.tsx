@@ -13,7 +13,8 @@ jest.mock('react-router-dom', () => {
   }
 })
 
-describe('SingIn Pge', () => {
+describe('SingIn Pge', () =>
+{
   it('should be able to sign in', () => {
     const { getByPlaceholderText, getByText } = render(<SingIn />);
 
