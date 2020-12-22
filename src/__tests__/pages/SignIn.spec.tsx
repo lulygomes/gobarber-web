@@ -31,7 +31,7 @@ jest.mock('../../hooks/toast', () => {
   };
 });
 
-describe('SingIn Pge', () => {
+describe('SingIn Page', () => {
   beforeEach(() => {
     mockedHistoryPush.mockClear();
   });
